@@ -7,9 +7,18 @@ CC = gcc
 MKPLAYDOHFS_OBJS=mkplaydohfs.o
 MKPLAYDOHFS_DEPS=$(MKPLAYDOHFS_OBJS:.o=.d)
 
-all: mkplaydohfs
+PLAYDOHFSMODULE_OBJS=super.o
+PLAYDOHFSMODULE_DEPS=$(PLAYDOHFSMODULE_OBJS:.o=.d)
+
+TESTPLAYDOHFS_OBJS=$(PLAYDOHFSMODULE_OBJS) testplaydohfs.o
+TESTPLAYDOHFS_DEPS=$(DUMPPLAYDOHFS_OBJS:.o=.d)
+
+all: mkplaydohfs testplaydohfs
 
 mkplaydohfs: $(MKPLAYDOHFS_OBJS)
+	$(CC) -o $@ $^
+
+testplaydohfs: $(TESTPLAYDOHFS_OBJS) $(PLAYDOHFSMODULE_OBJS)
 	$(CC) -o $@ $^
 
 %.o: %.c
@@ -20,8 +29,10 @@ mkplaydohfs: $(MKPLAYDOHFS_OBJS)
 	$(CC) -MM $< | sed s/\\.o/.d/ >> $@
 
 clean:
-	-rm $(MKPLAYDOHFS_OBJS) $(MKPLAYDOHFS_DEPS) mkplaydohfs
+	-rm $(MKPLAYDOHFS_OBJS) $(MKPLAYDOHFS_DEPS) $(TESTPLAYDOHFS_OBJS) $(TESTPLAYDOHFS_OBJS) $(PLAYDOHFSMODULE_OBJS) $(PLAYDOHFSMODULE_DEPS)
+	-rm mkplaydohfs testplaydohfs
 
 -include $(MKPLAYDOHFS_DEPS)
+-include $(PLAYDOHFSMODULE_DEPS)
 
 # vim: set noexpandtab:

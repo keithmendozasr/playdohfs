@@ -1,8 +1,10 @@
 #ifndef PLAYDOHFS_SUPER_H
 #define PLAYDOHFS_SUPER_H
 
+#include <stdint.h>
+
 #define PLAYDOHFS_MAGIC_NUM 0x00729364
-#define PLAYDOHFS_BLOCKSIZE 512u
+#define PLAYDOHFS_BLOCKSIZE 4096u
 #define PLAYDOHFS_VERSION 1u
 #define PLAYDOHFS_MAX_FILENAME 255u
 
@@ -15,11 +17,14 @@
 */
 struct __attribute__ ((__packed__)) playdohfs_super_block 
 {
-	uint32_t version;
 	uint32_t magic;
+	uint32_t version;
+    uint32_t blocksize;
 	uint32_t freeinodes;
-    char padding[4096-(sizeof(uint32_t)*3)];
-}; 
+    uint32_t maxinodes;
+    char padding[4096-(sizeof(uint32_t)*5)];
+};
+const size_t playdohfs_sb_size = sizeof(struct playdohfs_super_block);
 
 /*
     Structure for 1 inode
@@ -45,5 +50,9 @@ typedef struct __attribute__ ((__packed__)) playdohfs_inode_table
 {
     struct playdohfs_inode inodes[PLAYDOHFS_MAX_INODES];
 } playdohfs_inodes_table;
+
+/* Use to print "debug" message. For now just use printf. When this is merged to
+    Linux VFS, pr_debug will be used */
+#define print_debug(fmt, ...) printf(fmt, __VA_ARGS__)
 
 #endif

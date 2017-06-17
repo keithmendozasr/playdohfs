@@ -9,9 +9,11 @@ int main(int argc, char **argv)
 {
 	FILE *dest;
 	struct playdohfs_super_block sb = {
-		.version = PLAYDOHFS_VERSION,
 		.magic = PLAYDOHFS_MAGIC_NUM,
-		.freeinodes = PLAYDOHFS_MAX_INODES
+		.version = PLAYDOHFS_VERSION,
+        .blocksize = PLAYDOHFS_BLOCKSIZE,
+		.freeinodes = PLAYDOHFS_MAX_INODES,
+        .maxinodes = PLAYDOHFS_MAX_INODES
 	};
 
     playdohfs_inodes_table inode_table;
