@@ -35,17 +35,20 @@ const size_t playdohfs_sb_size = sizeof(struct playdohfs_super_block);
 struct __attribute__ ((__packed__)) playdohfs_inode
 {
     char filename[PLAYDOHFS_MAX_FILENAME+1];
-    uint8_t type;
     uint32_t filesize;
     uint32_t blockpos;
+
+     /* Mode and inode type. 
+        Bits 0-7 is for the file type. Bits 8-15 is for the permissions. */
+     uint16_t mode_t;
 };
 
 /* 
-    Making max number of inodes to 40 since each playdohfs_inode struct is 102
-    bytes wide. Making an array of 40 playdohfs_inode will fit in 4096-byte block
+    Making max number of inodes to 12 since each playdohfs_inode struct is 336
+    bytes wide. Making an array of 12 playdohfs_inode will fit in 4096-byte block
     that'll fit well with sb_bread
 */
-#define PLAYDOHFS_MAX_INODES 40u
+#define PLAYDOHFS_MAX_INODES 12u
 typedef struct __attribute__ ((__packed__)) playdohfs_inode_table
 {
     struct playdohfs_inode inodes[PLAYDOHFS_MAX_INODES];

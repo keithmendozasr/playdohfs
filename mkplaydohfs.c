@@ -44,7 +44,7 @@ int main(int argc, char **argv)
                     /* Just using the superblock to fill in the datablock area
                         for convenience */
                     retVal = EXIT_SUCCESS;
-                    for(int i=0; i<40; i++)
+                    for(unsigned int i=0; i<PLAYDOHFS_MAX_INODES; i++)
                     {
                         if(fwrite(&sb, sizeof(struct playdohfs_super_block), 1, dest) != 1)
                         {
