@@ -22,7 +22,13 @@ struct __attribute__ ((__packed__)) playdohfs_super_block
     uint32_t blocksize;
 	uint32_t freeinodes;
     uint32_t maxinodes;
-    char padding[4096-(sizeof(uint32_t)*5)];
+    uint32_t freeblocks;
+    uint32_t maxblocks;
+    uint16_t inodemap;
+    uint16_t blockmap;
+
+    /* The 2 uint16_t are being counted as 1 uint32_t */
+    char padding[4096-(sizeof(uint32_t)*9)];
 };
 const size_t playdohfs_sb_size = sizeof(struct playdohfs_super_block);
 
