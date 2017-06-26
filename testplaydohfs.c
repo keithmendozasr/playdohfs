@@ -1,14 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-extern struct playdohfs_super_block* get_superblock(FILE *);
+#include "playdohfs.h"
 
 int main(int argc, char **argv)
 {
     FILE *fs;
+    struct playdohfs_super_block *sb=NULL;
+    playdohfs_inodes_table *itable = NULL;
 
     if(argc != 2)
     {
-        printf("Usage: dumpplaydohfs <file system object>\n");
+        printf("Usage: testplaydohfs <file system object>\n");
         return 1;
     }
 
@@ -18,7 +21,20 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    (void)get_superblock(fs);
+    do
+    {
+        sb = get_superblock(fs);
+        if(!sb)
+            break;
+
+        itable = get_inodes_table(fs);
+
+    }while(0);
+
+    if(sb)
+        free(sb);
+    if(itable)
+        free(itable);
 
     fclose(fs);
     return 0;

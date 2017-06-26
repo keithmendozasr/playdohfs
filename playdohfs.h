@@ -17,8 +17,8 @@
 */
 struct __attribute__ ((__packed__)) playdohfs_super_block 
 {
-	uint32_t magic;
-	uint32_t version;
+    uint32_t magic;
+    uint32_t version;
     uint32_t blocksize;
 	uint32_t freeinodes;
     uint32_t maxinodes;
@@ -28,9 +28,9 @@ struct __attribute__ ((__packed__)) playdohfs_super_block
     uint16_t blockmap;
 
     /* The 2 uint16_t are being counted as 1 uint32_t */
-    char padding[4096-(sizeof(uint32_t)*9)];
+    char padding[4096-(sizeof(uint32_t)*8)];
 };
-const size_t playdohfs_sb_size = sizeof(struct playdohfs_super_block);
+static const size_t playdohfs_sb_size = sizeof(struct playdohfs_super_block);
 
 /*
     Structure for 1 inode
@@ -58,13 +58,33 @@ struct __attribute__ ((__packed__)) playdohfs_inode
     that'll fit well with sb_bread
 */
 #define PLAYDOHFS_MAX_INODES 12u
-typedef struct __attribute__ ((__packed__)) playdohfs_inode_table
+typedef struct __attribute__ ((__packed__)) playdohfs_inodes_table
 {
     struct playdohfs_inode inodes[PLAYDOHFS_MAX_INODES];
 } playdohfs_inodes_table;
 
+/* This will be the directory's block data content */
+struct __attribute__ ((__packed__)) playdohfs_dir_records
+{
+    uint8_t child_count;
+
+    /* Worst-case scenario is all files are in the same directory */
+    uint32_t content_inodes[PLAYDOHFS_MAX_INODES];
+
+    /* Parent directory inode
+        TODO: Re-evaluate if this is necessary in Linux VFS
+    */
+    uint32_t parent_inode;
+
+    char padding[4096 - (sizeof(uint8_t)) - (sizeof(uint32_t) * (PLAYDOHFS_MAX_INODES + 1))];
+};
+
 /* Use to print "debug" message. For now just use printf. When this is merged to
     Linux VFS, pr_debug will be used */
 #define print_debug(fmt, ...) printf(fmt, __VA_ARGS__)
+
+/* Function definitions */
+extern struct playdohfs_super_block* get_superblock(FILE *fs);
+extern struct playdohfs_inodes_table* get_inodes_table(FILE *fs);
 
 #endif
